@@ -73,6 +73,12 @@ binary_file.write(byte_arr)
 for key in char_dictionnary:
     print("0x{} {:.5f}".format(ord(key), (char_dictionnary[key]) / sum_char))
 
+sum_bits = 0
+for key in char_dictionnary:
+    sum_bits += len(dict_huffman[key]) * char_dictionnary[key]
+
+print("{}".format(sum_bits / sum_char))
+
 #Calculer entropie H
 H = 0
 for key in char_dictionnary:
@@ -91,11 +97,12 @@ R = D-H
 print("Redondance R = {:.5f}".format(R))
 
 #Taux de compression maximum du fichier
-L = 0
-for key in char_dictionnary:
-    prob = char_dictionnary[key] / sum_char
-    L += prob * len(str(ord(key)))
+L = 1 - H / D
+#for key in char_dictionnary:
+#    prob = char_dictionnary[key] / sum_char
+#    L += prob * len(str(ord(key)))
 
-print("Taux de compression maximum du fichier = {:.5f}".format(1-((L-H)/D)))
+#print("Taux de compression maximum du fichier = {:.5f}".format(1-((L-H)/D)))
+print("Taux de compression maximum du fichier = {:.5f} {} {}".format(L))
 
 input_file.close()
