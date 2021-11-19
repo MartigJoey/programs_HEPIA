@@ -7,6 +7,9 @@
 
 // Création d’une nouvelle matrice de m lignes et n colonnes et allocation de la mémoire
 error_code matrix_alloc(matrix *mat, int32_t m, int32_t n) {
+    if(m < 1 || n < 1)
+        return err;
+
     mat->m = m;
     mat->n = n;
     mat->data = malloc(m * sizeof(int32_t*));
@@ -19,6 +22,9 @@ error_code matrix_alloc(matrix *mat, int32_t m, int32_t n) {
 
 // Allocation et initialisation à une valeur, val, d’une nouvelle matrice de m lignes et n colonnes
 error_code matrix_init(matrix *mat, int32_t m, int32_t n, int32_t val) {
+    if(m < 1 || m > mat->m || n < 1 || n > mat->n)
+        return err;
+        
     mat->data[m][n] = val;
 
     return ok;

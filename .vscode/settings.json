@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "tableau_uni.h": "c"
+        "tableau_uni.h": "c",
+        "stdlib.h": "c"
     }
 }

@@ -5,13 +5,13 @@
 #include <stdbool.h>
 
 typedef enum _error_code {
-ok, 
-err
+    ok, 
+    err
 } error_code;
 
 typedef struct _matrix {
-int32_t m, n;
-int32_t **data;
+    int32_t m, n;
+    int32_t **data;
 } matrix;
 
 error_code matrix_alloc(matrix *mat, int32_t m, int32_t n);
