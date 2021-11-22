@@ -10,7 +10,7 @@ int main(){
     int m = 3, n = 3;
     printf("alloc\n");
     matrix_alloc(mat, m, n);
-    matrix_init(mat, 0, 0, 42);
+    matrix_init(mat, 2, 2, 42);
     matrix_print(*mat);
 
     printf("init_from_array\n");
