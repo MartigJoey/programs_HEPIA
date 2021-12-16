@@ -1,5 +1,5 @@
 CC:=gcc
-CFLAGS:=-g -O3 -fsanitize=address
+CFLAGS:=-g -O3 -Wextra -pedantic -fsanitize=address
 LDFLAGS:=-lm
 NAME:=stack
 

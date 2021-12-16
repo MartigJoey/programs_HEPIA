@@ -50,3 +50,23 @@ printf("eps = %g\n", eps)
 
 
 [-2, 1, 3, 4, 5, 7, 10, 15]<br>
+
+# Assert
+## Afficher un message dans le assert
+```c
+assert(condition && "Commentaire sur l'assert");
+```
+
+# Realloc
+```c
+void *realloc(void *ptr, int size);
+
+int *data = malloc(5*sizeof(int));
+
+data = realloc(data, 10*sizeof(int));
+```
+Taille de data = 5, puis après realloc = 10.
+
+# Git
+git branch -a
+git checkout Nom_Branch
