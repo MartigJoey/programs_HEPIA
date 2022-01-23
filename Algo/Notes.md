@@ -70,3 +70,64 @@ Taille de data = 5, puis après realloc = 10.
 # Git
 git branch -a
 git checkout Nom_Branch
+
+# Hash
+
+|   |   |   |   |   |   |   |   |   |   |   |
+|---|---|---|---|---|---|---|---|---|---|---|
+|  `index`  | 1 | 1 | 2 | 2 | 2 | 3 | 4 | 5 | 5 | 9 |
+|  `valeur` | L | A | X | M | B | N | D | E | P | T |
+
+|   |   |   |   |   |   |   |   |   |   |   |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10|
+|   | L | X | N | D | E |   |   |   | T |   |
+|   | A | M |   |   | P |   |   |   |   |   |
+|   |   | B |   |   |   |   |   |   |   |   |
+
+FAIRE EX 3
+
+# Insertion Hash
+
+i = hash(key);
+init = i
+nb_occ = 1
+while hm[i].state == Occupied && hm[i].key != key :
+    i = (hash(key) + 3 * nbOcc) % 10
+    nb_occ++
+    if i == init
+        return null
+
+hm[i].key = key
+hm[i].value = value
+hm[i].state = Occupied
+
+# Suppression Hash
+
+i = hash(key);
+init = i
+nb_occ = 1
+while hm[i].key != key :
+    i = (hash(key) + 3 * nbOcc) % 10
+    nb_occ++
+    if i == init || hm[i].state == Empty :
+        return null
+
+hm[i].state = Deleted
+
+# Recherche Hash
+
+i = hash(key);
+init = i
+nb_occ = 1
+while hm[i].key != key :
+    i = (hash(key) + 3 * nbOcc) % 10
+    nb_occ++
+    if i == init || hm[i].state == Empty :
+        return null
+
+return hm[i].state != deleted ? hm[i] : null
+
+struct cell{
+
+}

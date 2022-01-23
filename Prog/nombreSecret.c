@@ -58,6 +58,7 @@ int PlayReversedGamemode(){
     while (!gameIsOver)
     {
         chosenOne = (iaMax - iaMin) / 2 + iaMin;
+        //chosenOne = (iaMax + iaMin) / 2;
         printf("Valeur choisie %d\n", chosenOne);
         printf("Elle plus grande (>), plus petite (<) ou correcte (=) ?\n");
         nbPlay++;
