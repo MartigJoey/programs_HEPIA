@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+
+#define MAX_STR_LENGTH 10000
 
 struct hm_t {
     struct entry_t **entries;
@@ -20,7 +23,7 @@ int hash(const char *const key, int length) {
     for (size_t i = 0; i < strlen(key); ++i) {
         val = 43 * val + key[i];
     }
-    return (val % length);
+    return abs((val % length));
 }
 
 /// création d'un pointeur vers une hm
@@ -67,21 +70,25 @@ entry *create_entry(const char *const key, const char *const val) {
 /// écraser value dans la hm.
 hm *hm_set(hm *hash_map, const char *const key, const char *const value) {
     int index = hash(key, hash_map->length);
+    printf("i: %d\n", index);
     entry *current = hash_map->entries[index];
 
-    if (current != NULL) {
-        strcpy(current->value, value);
-        return hash_map;
-    }
-
-
     if(current != NULL){
-      while (current->next != NULL)
-        current = current->next;
-      current->next = create_entry(key, value);
+        while (current->next != NULL && strcmp(current->key, key) != 0){
+            current = current->next;
+        }
+
+        if(strcmp(current->key, key) == 0){
+            free(current->value);
+            //current->value = (char *)malloc(sizeof(char) * (strlen(value) + 1));
+            current->value = strdup(value);
+            return hash_map;
+        }
+        current->next = create_entry(key, value);
+        return hash_map;
     }else{
-      current = create_entry(key, value);
-    }    
+        current = create_entry(key, value);
+    }
 
     if (hash_map->entries[index] == NULL) {
         hash_map->entries[index] = current;
@@ -123,15 +130,47 @@ char *hm_rm(hm *hash_map, const char *const key) {
         previous = to_remove;
         to_remove = to_remove->next;
     }
-    
+
+    if(strcmp(hash_map->entries[index]->key, key) == 0)
+        hash_map->entries[index] = NULL;
+
     previous->next = to_remove->next;
     to_remove->next = NULL;
+    
+    char *result = (char *)malloc(sizeof(char) * (strlen(to_remove->value) + 1));
+    strcpy(result, to_remove->value);
 
-    return to_remove->value;
+    free(to_remove->key);
+    free(to_remove->value);
+    free(to_remove);
+    //free(previous);
+
+    return result;
 }
 
 /// convertit la hm en chaîne de caractères
 char *hm_to_str(const hm *const hash_map) {
+    char *str = (char *)malloc(sizeof(char*) * MAX_STR_LENGTH);
+    str[0] = '\0';
+
+    for (int i = 0; i < hash_map->length; i++) {
+        entry * tmp = hash_map->entries[i];
+        char buffer[20];
+        sprintf(buffer, "%d", i);
+
+        while (tmp != NULL) {
+            strcat(str, "id: "); 
+            strcat(str, buffer);
+            strcat(str, " Key: ");
+            strcat(str, tmp->key);
+
+            strcat(str, " Value: ");
+            strcat(str, tmp->value);
+            strcat(str, "\n");
+            tmp = tmp->next;
+        }
+    }
+    return str;
 }
 
 /// affiche le contenu de la hm
