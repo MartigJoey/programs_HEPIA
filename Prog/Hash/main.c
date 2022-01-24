@@ -35,8 +35,6 @@ void clear_buffer() {
 
 
 int main(){
-  // ajouter/supprimer / modifier 
-  // Tel, nom
   hm *phonebook = hm_create(10);
   while(true){
     char user_choice;

@@ -12,4 +12,4 @@ tests: $(NAME)_tests.o $(NAME).o
 $(NAME).o: $(NAME).h
 
 clean:
-	rm -f *.o $(NAME) tests
+	rm -f *.o $(NAME) tests main
