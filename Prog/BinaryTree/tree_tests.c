@@ -71,12 +71,47 @@ int main() {
 
 
   pretty_print(tree, 0);
-  printf("%d\n", get_node_balance(tree));
+  printf("Node balance %d\n", get_node_balance(tree));
   assert(get_node_balance(tree) == 2);
 
   assert(is_avl(tree) == 0);
 
+
+  remove_element(tree, 14);
+  insert(tree, 5);
+  pretty_print(tree, 0);
+
+  assert(is_avl(tree) == 1);
+
   tree_free(tree);
 
+  // Test free
+  tree_t* tree2 = create(5);
+
+  pretty_print(tree2, 0);
+
+  insert(tree2, 4);
+  insert(tree2, 6);
+
+  remove_element(tree2, 5);
+  remove_element(tree2, 4);
+
+  tree_free(tree2);
+
+
+
+  tree_t* tree3 = create(5);
+
+  pretty_print(tree3, 0);
+
+  insert(tree3, 4);
+  insert(tree3, 6);
+  
+  remove_element(tree3, 6);
+  remove_element(tree3, 5);
+
+  tree_free(tree3);
+
+  // Bug quand delete racine avec 1 enfant
   return EXIT_SUCCESS;
 }

@@ -22,7 +22,7 @@ void tree_free(tree_t *tree) {
 }
 
 int tree_size(tree_t *tree) {
-  if(tree == NULL)
+  if (tree == NULL)
     return 0;
 
   int result = 1;
@@ -34,7 +34,7 @@ int tree_size(tree_t *tree) {
 }
 
 int tree_depth(tree_t *tree) {
-  if(tree == NULL)
+  if (tree == NULL)
     return 0;
 
   int result_left = 1;
@@ -172,7 +172,7 @@ void remove_element(tree_t *tree, int value) {
     tree_t *tree_remove = (tree_t *)malloc(sizeof(tree_t));
 
     // Si l'élément à retirer est à droite
-    if (tree->right->value == value) {
+    if (tree->right != NULL && tree->right->value == value) {
       tree_remove = tree->right;
 
       // Place un nouveau noeud à la place
@@ -189,7 +189,9 @@ void remove_element(tree_t *tree, int value) {
 
       if (tree != tree_remove->right)
         tree->right = tree_remove->right;
-    } else if (tree->left->value == value) {
+      
+      free(tree_remove);
+    } else if (tree->left != NULL && tree->left->value == value) {
       tree_remove = tree->left;
 
       if (tree_remove->right != NULL)
@@ -204,12 +206,13 @@ void remove_element(tree_t *tree, int value) {
 
       if (tree != tree_remove->left)
         tree->left = tree_remove->left;
+
+      free(tree_remove);
     }
   } else {
-    tree_t *new_root = (tree_t *)malloc(sizeof(tree_t));
-    tree_t *new_root_p = NULL;  // parent
-
     if (root_node->left != NULL) {
+      tree_t *new_root = NULL;
+      tree_t *new_root_p = NULL;  // parent
       new_root = root_node->left;
 
       while (new_root->right != NULL) {
@@ -230,37 +233,61 @@ void remove_element(tree_t *tree, int value) {
       root_node->value = new_root->value;
       new_root->left = NULL;
       new_root->right = NULL;
-
+      
+      free(new_root);
     } else {
-      root_node->value = root_node->right->value;
-      root_node->left = root_node->right->left;
-      root_node->right = root_node->right->right;
+      if(root_node->right != NULL){
+        tree_t *right = root_node->right;
+        
+        root_node->value = right->value;
+        root_node->left = right->left;
+        root_node->right = right->right;
+        
+        free(right);
+
+      }else if(root_node->left != NULL){
+        tree_t *left = root_node->left;
+
+        root_node->value = left->value;
+        root_node->left = left->left;
+        root_node->right = left->right;
+
+        free(left);
+      }
     }
   }
 }
 
-
 // AVL METHODS
 
-bool is_avl(tree_t *tree){
-  
+bool is_avl(tree_t *tree) {
+  if ((tree->left != NULL && !is_avl(tree->left)) || 
+      (tree->right != NULL && !is_avl(tree->right))){
+    //printf("false\n");
+    return false;
+  }
+
+
+  //printf("%d\n", get_node_balance(tree));
+  return abs(get_node_balance(tree)) > 1 ? false : true;
 }
 
-int get_node_balance(tree_t *tree){
-  int result = tree_depth(tree->right) - tree_depth(tree->left);
+int get_node_balance(tree_t *tree) {
+  if(tree != NULL){
+    int result = tree_depth(tree->right) - tree_depth(tree->left);
 
-  if(result > 2)
-    return 2;
-  if(result < 2)
-    return -2;
-  
-  return result;
+    if (result > 2)
+      return 2;
+    if (result < -2)
+      return -2;
+
+    return result;
+  }
+  return 0;
 }
 
-tree_t* balance_avl(tree_t *tree){
-
+tree_t *balance_avl(tree_t *tree) {
 }
-
 
 /*
 bool result_left = true;
@@ -279,7 +306,7 @@ bool result_left = true;
 
     if(tree->left->right != NULL)
       depth_right = get_node_balance(tree->left->right);
-    
+
     result_left = abs(abs(depth_left) - abs(depth_right)) > 1 ? false : true;
   }
 
@@ -296,7 +323,7 @@ bool result_left = true;
 
     if(tree->left->right != NULL)
       depth_right = get_node_balance(tree->right->right);
-    
+
     result_right = abs(abs(depth_left) - abs(depth_right)) > 1 ? false : true;
   }
 
