@@ -88,8 +88,6 @@ int main() {
   // Test free
   tree_t* tree2 = create(5);
 
-  pretty_print(tree2, 0);
-
   insert(tree2, 4);
   insert(tree2, 6);
 
@@ -101,8 +99,6 @@ int main() {
 
 
   tree_t* tree3 = create(5);
-
-  pretty_print(tree3, 0);
 
   insert(tree3, 4);
   insert(tree3, 6);
