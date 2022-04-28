@@ -28,8 +28,10 @@ int tree_size(tree_t *tree) {
   int result = 1;
   if (tree->right != NULL)
     result += tree_size(tree->right);
+
   if (tree->left != NULL)
     result += tree_size(tree->left);
+
   return result;
 }
 
@@ -39,10 +41,9 @@ int tree_depth(tree_t *tree) {
 
   int result_left = 1;
   int result_right = 1;
-  if (tree->right != NULL)
-    result_right += tree_size(tree->right);
-  if (tree->left != NULL)
-    result_left += tree_size(tree->left);
+
+  result_right += tree_depth(tree->right);
+  result_left += tree_depth(tree->left);
 
   return result_left > result_right ? result_left : result_right;
 }
@@ -64,6 +65,9 @@ void print_gdr(tree_t *tree) {
 }
 
 void pretty_print(tree_t *tree, int depth) {
+  if(!depth)
+    printf("_____________________\n");
+
   if (tree->right != NULL)
     pretty_print(tree->right, depth + 1);
 
@@ -73,6 +77,21 @@ void pretty_print(tree_t *tree, int depth) {
 
   if (tree->left != NULL)
     pretty_print(tree->left, depth + 1);
+}
+
+void pretty_print_fe(tree_t *tree, int depth) {
+  if(!depth)
+    printf("_____________________\n");
+
+  if (tree->right != NULL)
+    pretty_print_fe(tree->right, depth + 1);
+
+  for (int i = 0; i < depth * 7; i++)
+    printf(" ");
+  printf("%d\n", fe(tree));
+
+  if (tree->left != NULL)
+    pretty_print_fe(tree->left, depth + 1);
 }
 
 tree_t *insert(tree_t *tree, int value) {
@@ -189,7 +208,7 @@ void remove_element(tree_t *tree, int value) {
 
       if (tree != tree_remove->right)
         tree->right = tree_remove->right;
-      
+
       free(tree_remove);
     } else if (tree->left != NULL && tree->left->value == value) {
       tree_remove = tree->left;
@@ -233,19 +252,19 @@ void remove_element(tree_t *tree, int value) {
       root_node->value = new_root->value;
       new_root->left = NULL;
       new_root->right = NULL;
-      
+
       free(new_root);
     } else {
-      if(root_node->right != NULL){
+      if (root_node->right != NULL) {
         tree_t *right = root_node->right;
-        
+
         root_node->value = right->value;
         root_node->left = right->left;
         root_node->right = right->right;
-        
+
         free(right);
 
-      }else if(root_node->left != NULL){
+      } else if (root_node->left != NULL) {
         tree_t *left = root_node->left;
 
         root_node->value = left->value;
@@ -261,19 +280,18 @@ void remove_element(tree_t *tree, int value) {
 // AVL METHODS
 
 bool is_avl(tree_t *tree) {
-  if ((tree->left != NULL && !is_avl(tree->left)) || 
-      (tree->right != NULL && !is_avl(tree->right))){
-    //printf("false\n");
+  if ((tree->left != NULL && !is_avl(tree->left)) ||
+      (tree->right != NULL && !is_avl(tree->right))) {
+    // printf("false\n");
     return false;
   }
 
-
-  //printf("%d\n", get_node_balance(tree));
-  return abs(get_node_balance(tree)) > 1 ? false : true;
+  // printf("%d\n", fe(tree));
+  return abs(fe(tree)) > 1 ? false : true;
 }
 
-int get_node_balance(tree_t *tree) {
-  if(tree != NULL){
+int fe(tree_t *tree) {
+  if (tree != NULL) {
     int result = tree_depth(tree->right) - tree_depth(tree->left);
 
     if (result > 2)
@@ -287,45 +305,55 @@ int get_node_balance(tree_t *tree) {
 }
 
 tree_t *balance_avl(tree_t *tree) {
+  /*
+  Rééquilibrage
+  Lien avec les cas vus plus tôt
+  fe(P) = -2 && fe(gauche(P)) = -1 => cas 1a rotation droite
+  fe(P) = -2 && fe(gauche(P)) = +1 => cas 2a gauche->left droite racine
+  fe(P) = +2 && fe(droite(P)) = -1 => cas 2b droite->right gauche racine
+  fe(P) = +2 && fe(droite(P)) = +1 => cas 1b rotation gauche
+  */
+
+  if (tree->left != NULL)
+    tree->left = balance_avl(tree->left);
+
+  if (tree->right != NULL)
+    tree->right = balance_avl(tree->right);
+
+  if(fe(tree) == -2 && (fe(tree->left) == -1 || fe(tree->left) == 0)){
+    printf("left\n");
+    tree = rotation_right(tree);
+  }else if(fe(tree) == -2 && fe(tree->left) == 1){
+    printf("left right\n");
+    tree->left = rotation_left(tree->left);
+    tree = rotation_right(tree);
+  }else if(fe(tree) == 2 && fe(tree->right) == -1){
+    printf("right left\n");
+    tree->right = rotation_right(tree->right);
+    tree = rotation_left(tree);
+  }else if(fe(tree) == 2 && (fe(tree->right) == 1 || fe(tree->right) == 0)){
+    printf("right\n");
+    tree = rotation_left(tree);
+  }
+  return tree;
 }
 
-/*
-bool result_left = true;
-  bool result_right = true;
-
-  if (tree->left != NULL) {
-    result_left = is_avl(tree->left);
-    if(!result_left)
-      return false;
-
-    int depth_left = 0;
-    int depth_right = 0;
-
-    if(tree->left->left != NULL)
-      depth_left = get_node_balance(tree->left->left);
-
-    if(tree->left->right != NULL)
-      depth_right = get_node_balance(tree->left->right);
-
-    result_left = abs(abs(depth_left) - abs(depth_right)) > 1 ? false : true;
+tree_t* rotation_left(tree_t *tree) {
+  tree_t *subtree = NULL;
+  if (tree != NULL) {
+    subtree = tree->right;
+    tree->right = subtree->left;
+    subtree->left = tree;
   }
+  return subtree;
+}
 
-  if (tree->right != NULL) {
-    result_right = is_avl(tree->left);
-    if(!result_right)
-      return false;
-
-    int depth_left = 0;
-    int depth_right = 0;
-
-    if(tree->left->left != NULL)
-      depth_left = get_node_balance(tree->right->left);
-
-    if(tree->left->right != NULL)
-      depth_right = get_node_balance(tree->right->right);
-
-    result_right = abs(abs(depth_left) - abs(depth_right)) > 1 ? false : true;
+tree_t *rotation_right(tree_t *tree) {
+  tree_t *subtree = NULL;
+  if (tree != NULL) {
+    subtree = tree->left;
+    tree->left = subtree->right;
+    subtree->right = tree;
   }
-
-  return result_left == false || result_right == false ? false : true;
-*/
+  return subtree;
+}

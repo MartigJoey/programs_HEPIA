@@ -39,7 +39,8 @@ int main() {
   print_rgd(tree);
   printf("\n");
 
-  assert(tree_depth(tree) == 7);
+  pretty_print(tree, 0);
+  assert(tree_depth(tree) == 4);
 
   tree_t* search = find(tree, 15);
   assert(search->value == 15);
@@ -71,8 +72,8 @@ int main() {
 
 
   pretty_print(tree, 0);
-  printf("Node balance %d\n", get_node_balance(tree));
-  assert(get_node_balance(tree) == 2);
+  printf("Node balance %d\n", fe(tree));
+  assert(fe(tree) == 2);
 
   assert(is_avl(tree) == 0);
 
@@ -107,6 +108,67 @@ int main() {
   remove_element(tree3, 5);
 
   tree_free(tree3);
+
+  tree_t* tree4 = create(5);
+
+  insert(tree4, 6);
+  insert(tree4, 10);
+
+  pretty_print(tree4, 0);
+  //tree4 = rotation_left(tree4);
+  tree4 = balance_avl(tree4);
+
+  pretty_print(tree4, 0);
+
+
+  insert(tree4, 15);
+  insert(tree4, 9);
+  insert(tree4, 8);
+  pretty_print(tree4, 0);
+  tree4 = balance_avl(tree4);
+
+  pretty_print(tree4, 0);
+
+  tree_free(tree4);
+
+  tree_t* tree5 = create(6);
+
+  insert(tree5, 7);
+  insert(tree5, 3);
+
+  pretty_print(tree5, 0);
+
+
+  insert(tree5, 1);
+  insert(tree5, 4);
+  insert(tree5, 5);
+  pretty_print(tree5, 0);
+  tree5 = balance_avl(tree5);
+
+  pretty_print(tree5, 0);
+
+  tree_free(tree5);
+
+
+  tree_t* tree6 = create(15);
+  insert(tree6, 20);
+  insert(tree6, 6);
+  insert(tree6, 7);
+  insert(tree6, 3);
+
+  pretty_print(tree6, 0);
+
+
+  insert(tree6, 1);
+  insert(tree6, 4);
+  insert(tree6, 5);
+  pretty_print(tree6, 0);
+  tree6 = balance_avl(tree6);
+  //tree6 = balance_avl(tree6);
+
+  pretty_print_fe(tree6, 0);
+  pretty_print(tree6, 0);
+  tree_free(tree6);
 
   // Bug quand delete racine avec 1 enfant
   return EXIT_SUCCESS;

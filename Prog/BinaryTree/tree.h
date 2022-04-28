@@ -13,6 +13,7 @@ tree_t* create(int value);
 void tree_free(tree_t* tree);
 int tree_size(tree_t* t);
 void pretty_print(tree_t* tree, int depth);
+void pretty_print_fe(tree_t *tree, int depth);
 int tree_depth(tree_t* tree);
 void print_rgd(tree_t* t);
 void print_gdr(tree_t* t);
@@ -28,8 +29,10 @@ tree_t *find_min(tree_t *tree);
 tree_t *find_max(tree_t *tree);
 
 bool is_avl(tree_t *tree);
-int get_node_balance(tree_t *tree);
+int fe(tree_t *tree);
 tree_t* balance_avl(tree_t *tree);
+tree_t* rotation_left(tree_t *tree);
+tree_t* rotation_right(tree_t *tree);
 
 
 #endif
