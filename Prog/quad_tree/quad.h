@@ -10,7 +10,7 @@ typedef struct quad_tree_t{
 
 quad_tree* create_node(int value);
 void tree_free(quad_tree* tree);
-int* to_matrix(quad_tree* tree);
+void to_matrix(quad_tree* qt, int row, int col, int** matrix);
 quad_tree* to_quad_tree(int size, int** array);
 void symetrie(quad_tree* tree);
 quad_tree* compress(quad_tree* tree);

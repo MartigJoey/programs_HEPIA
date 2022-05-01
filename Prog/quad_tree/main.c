@@ -36,23 +36,39 @@ void free_array_(int size, int** mat){
 
 int main() {
 	int array_[SIZE][SIZE] = {{0,0,1,1},
-			{0,0,1,0},
-			{1,0,1,0},
-			{0,1,0,1}};
+							  {0,0,1,0},
+							  {1,0,1,0},
+							  {0,1,0,1}};
 
 	int** array = copy_array(SIZE, array_);
 
-    quad_tree* tree = create_node(0);
+    quad_tree* tree;
 
   // matrix* to_matrix(quad_tree* tree);
 
     tree = to_quad_tree(SIZE, array);
 	pretty_print(tree, 0);
-  // quad_tree* symetrie(quad_tree* tree);
+	symetrie(tree);
+	pretty_print(tree, 0);
 
+	int** array2 = alloc_array_(SIZE);
+	to_matrix(tree, SIZE, SIZE, array2);
+
+	for (size_t i = 0; i < SIZE; i++)
+	{
+		for (size_t j = 0; j < SIZE; j++)
+		{
+			printf("%d, ", array2[i][j]);
+		}
+		printf("\n");
+	}
+	
+  // quad_tree* symetrie(quad_tree* tree);
+	
   // quad_tree* compress(quad_tree* tree);
 
 	free_array_(SIZE, array);
+	free_array_(SIZE, array2);
     tree_free(tree);
 
   return EXIT_SUCCESS;

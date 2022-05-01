@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 quad_tree* create_node(int value) {
     quad_tree* node = calloc(1, sizeof(quad_tree));
@@ -28,9 +29,96 @@ void tree_free(quad_tree* tree) {
 
     free(tree);
 }
+/*
+void to_matrix(quad_tree* tree, int size, int index, int** matrix) {
+    if(index < 0)
+        index = 0;
 
-int* to_matrix(quad_tree* tree) {
+    printf("\n");
+    for (int i = 0; i < 4; i++) {
+        if (tree->children[i]->children[0] != NULL){
+
+            int new_index = index;
+            //if(tree->children[i]->children[0] != NULL)
+            new_index = index/4*i-1;
+                
+            to_matrix(tree->children[i], size, new_index, matrix);
+        }
+        else{
+            int x;
+            if (index == 0)
+                x = (index+i) % 2;
+            else
+                x = (index+1+i) % 2;
+
+            if((index+1) % 8 != 0 && index != 0)
+                x += 3;
+                
+            int y = (int)floor((index+1) / size);
+
+
+
+            //if(i > 1)
+            printf("if x:%d  y:%d   index:%d  i:%d  \n", x, (int)floor((index+5) / size), index+1, i);
+            //  printf("else x:%d  y:%d   index:%d  i:%d  \n", x, y, index+1, i);
+
+            if(i > 1)
+                matrix[y][x] = tree->val;
+            else
+                matrix[y][x] = tree->val;
+        }
+    }
 }
+*/
+
+bool is_leaf(quad_tree* qt) {
+    return (qt->children[0] == NULL);
+}
+
+int max(int a, int b) {
+    return (a >= b ? a : b);
+}
+
+int max_depth(int depths[4]) {
+    int m = depths[0];
+    for (int i = 1; i < 4; i += 1) {
+        m = max(m, depths[i]);
+    }
+    return m;
+}
+
+int depth(quad_tree* qt) {
+    int depths[] = {0, 0, 0, 0};
+    if (is_leaf(qt)) {
+        return 0;
+    } else {
+        for (int i = 0; i < 4; i += 1) {
+            depths[i] = depth(qt->children[i]);
+        }
+        return max_depth(depths) + 1;
+    }
+}
+
+quad_tree* position(int row, int col, quad_tree* qt) {
+    int d = depth(qt);
+    int index = 0;
+    while (d > 1) {
+        index = 2 * ((row % 2 ^ d) / 2 ^ (d - 1)) + (col % 2 ^ d) / 2 ^ (d - 1);
+        qt = qt->children[index];
+        d -= 1;
+    }
+    return qt;
+}
+
+void to_matrix(quad_tree* qt, int row, int col, int** matrix) {
+    for (int r = 0; r < row; r += 1) {
+        for (int c = 0; c < col; c += 1) {
+            quad_tree* current = position(r, c, qt);
+            matrix[r][c] = current->val;
+        }
+    }
+}
+
 
 int** alloc_array(int size) {
     int** array = malloc(sizeof(int*) * size);
@@ -98,14 +186,13 @@ void symetrie(quad_tree* tree) {
             symetrie(tree->children[i]);
     }
 
-    if (tree->children[0] != NULL) {
         quad_tree* tmp = tree->children[0];
         tree->children[0] = tree->children[1];
         tree->children[1] = tmp;
         tmp = tree->children[2];
         tree->children[2] = tree->children[3];
         tree->children[3] = tmp;
-    }
+    
 }
 
 quad_tree* compress(quad_tree* tree) {
