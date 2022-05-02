@@ -102,8 +102,8 @@ int depth(quad_tree* qt) {
 quad_tree* position(int row, int col, quad_tree* qt) {
     int d = depth(qt);
     int index = 0;
-    while (d > 1) {
-        index = 2 * ((row % 2 ^ d) / 2 ^ (d - 1)) + (col % 2 ^ d) / 2 ^ (d - 1);
+    while (d > 0) {
+        index = 2 * ((row % (int)pow(2, d)) / (int)(pow(2, (d - 1)))) + (col % (int)pow(2, d)) / (int)pow(2, (d - 1));
         qt = qt->children[index];
         d -= 1;
     }
@@ -158,10 +158,6 @@ quad_tree* to_quad_tree(int size, int** mat) {
         int new_size = size / 2;
 
         int** new_mat = copy_array_range(size, mat, 0, 0, new_size);
-        // printf("allo %d\n",new_mat[0][0]);
-        // printf("allo %d\n",new_mat[1][0]);
-        // printf("allo %d\n",new_mat[0][1]);
-        // printf("allo %d\n\n",new_mat[1][1]);
         tree->children[0] = to_quad_tree(new_size, new_mat);  // top left
         free_array(new_size, new_mat);
 
