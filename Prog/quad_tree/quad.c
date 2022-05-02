@@ -219,7 +219,7 @@ void pretty_print(quad_tree* tree, int depth) {
         printf(" ");
 
     if (tree->children[0] == NULL)
-        printf("%d\n", tree->val);
+        printf("%f\n", tree->val);
     else
         printf("o\n");
 
@@ -243,7 +243,6 @@ void lossless_compression(quad_tree* qt) {
             bool compress = true;
 
             for (size_t i = 1; i < 3; i++){
-                printf("va %d   ch %d\n", val, qt->children[i]->val);
                 if(val != qt->children[i]->val){
                     compress = false;
                     break;
@@ -268,26 +267,54 @@ void lossless_compression(quad_tree* qt) {
     }
 }
 
-/*
-A FAIRE ++
-rien moyenne (arbre) {
-si !est_feuille (arbre)
-pour enfant dans arbre. enfants
-moyenne( enfant)
-pour enfant dans arbre. enfants
-arbre.moyenne += enfant .moyenne
-arbre.moyenne_carre += enfant.moyenne_carre
-arbre. moyenne /= 4
-arbre. moyenne_carre /= 4
 
-rien compression_avec_pertes( arbre, theta)
-si !est_feuille (arbre)
-pour i de 0 à 3
-compression_avec_pertes( arbre. enfant[i ])
-si derniere_branche(arbre)
-si racine (arbre. moyenne_carre - arbre. moyenne^ 2) < thet
-detruire_enfants(arbre)
-*/
+void average(quad_tree* tree){
+    if(!is_leaf(tree)){
+        for(int i = 0; i < 4; i++){
+            average(tree->children[i]);
+        }
+
+        for(int i = 0; i < 4; i++){
+            tree->avg += tree->children[i]->val;
+            tree->avg_pow += pow(tree->children[i]->val, 2);
+        }
+        
+        tree->avg /= 4;
+        tree->avg_pow /= 4;
+    }
+}
+
+void loss_compression(quad_tree* tree, float theta){
+    if(!is_leaf(tree)){
+        for(int i = 0; i < 4; i++){
+            loss_compression(tree->children[i], theta);
+        }
+
+        if(tree->children[0]->children[0] == NULL){
+            printf("cal %f   avg %f     pow %f\n",sqrt(tree->avg_pow - pow(tree->avg, 2)), tree->avg_pow, pow(tree->avg, 2));
+            printf("%f   ", sqrt(tree->avg_pow - pow(tree->avg, 2)));
+            printf("%d   %f\n", sqrt(tree->avg_pow - pow(tree->avg, 2)) < theta, theta);
+
+            if(sqrt(tree->avg_pow - pow(tree->avg, 2)) < theta){
+                tree->val = sqrt(tree->avg_pow - pow(tree->avg, 2));
+                
+                printf("VAL %f\n\n", tree->val);
+                
+                free(tree->children[0]);
+                tree->children[0] = NULL;
+
+                free(tree->children[1]);
+                tree->children[1] = NULL;
+
+                free(tree->children[2]);
+                tree->children[2] = NULL;
+
+                free(tree->children[3]);
+                tree->children[3] = NULL;
+            }
+        }  
+    }
+}
 
 /*
 quad_tree* remove_node(quad_tree* tree) {

@@ -4,7 +4,9 @@
 #include <stdbool.h>
 
 typedef struct quad_tree_t{
-    int val;
+    float val;
+    float avg;
+    float avg_pow;
     struct quad_tree_t* children[4];
 }quad_tree;
 
@@ -14,6 +16,8 @@ void to_matrix(quad_tree* qt, int row, int col, int** matrix);
 quad_tree* to_quad_tree(int size, int** array);
 void symetrie(quad_tree* tree);
 void lossless_compression(quad_tree* qt);
+void average(quad_tree* tree);
+void loss_compression(quad_tree* tree, float theta);
 //bool last_value(quad_tree* qt, int* val);
 //bool is_last_branch(quad_tree* qt);
 

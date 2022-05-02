@@ -63,7 +63,9 @@ int main() {
 		printf("\n");
 	}
 	
-    lossless_compression(tree);
+    //lossless_compression(tree);
+    average(tree);
+    loss_compression(tree, 0.5f);
 	pretty_print(tree, 0);
   // quad_tree* symetrie(quad_tree* tree);
 	
@@ -72,6 +74,7 @@ int main() {
 	free_array_(SIZE, array);
 	free_array_(SIZE, array2);
     tree_free(tree);
+
 
   return EXIT_SUCCESS;
 }
