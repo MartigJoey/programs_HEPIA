@@ -1,3 +1,9 @@
+/**
+ * @file tree.h
+ * @author Joey Martig
+ * @brief méthods d'arbres binaires et avl
+ * @date 05.05.2022
+ */
 #ifndef TREE_H
 #define TREE_H
 

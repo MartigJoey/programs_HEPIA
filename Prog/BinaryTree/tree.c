@@ -1,3 +1,9 @@
+/**
+ * @file tree.c
+ * @author Joey Martig
+ * @brief Méthods du programme
+ * @date 05.05.2022
+ */
 #include "tree.h"
 
 #include <stdio.h>
@@ -321,18 +327,14 @@ tree_t *balance_avl(tree_t *tree) {
     tree->right = balance_avl(tree->right);
 
   if(fe(tree) == -2 && (fe(tree->left) == -1 || fe(tree->left) == 0)){
-    printf("left\n");
     tree = rotation_right(tree);
   }else if(fe(tree) == -2 && fe(tree->left) == 1){
-    printf("left right\n");
     tree->left = rotation_left(tree->left);
     tree = rotation_right(tree);
   }else if(fe(tree) == 2 && fe(tree->right) == -1){
-    printf("right left\n");
     tree->right = rotation_right(tree->right);
     tree = rotation_left(tree);
   }else if(fe(tree) == 2 && (fe(tree->right) == 1 || fe(tree->right) == 0)){
-    printf("right\n");
     tree = rotation_left(tree);
   }
   return tree;

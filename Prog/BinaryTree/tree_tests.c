@@ -170,6 +170,88 @@ int main() {
   pretty_print(tree6, 0);
   tree_free(tree6);
 
+  tree_t* maxi_tree = create(15);
+  insert(maxi_tree, 39);
+  insert(maxi_tree, 28);
+  insert(maxi_tree, 40);
+  insert(maxi_tree, 10);
+  insert(maxi_tree, 78);
+  insert(maxi_tree, 75);
+  insert(maxi_tree, 21);
+  insert(maxi_tree, 73);
+  insert(maxi_tree, 9);
+
+  insert(maxi_tree, 17);
+  insert(maxi_tree, 46);
+  insert(maxi_tree, 7);
+  insert(maxi_tree, 80);
+  insert(maxi_tree, 68);
+  insert(maxi_tree, 8);
+  insert(maxi_tree, 45);
+  insert(maxi_tree, 90);
+  insert(maxi_tree, 23);
+  insert(maxi_tree, 56);
+
+  pretty_print(maxi_tree, 0);
+  while(!is_avl(maxi_tree)){
+    maxi_tree = balance_avl(maxi_tree);
+  }
+  pretty_print(maxi_tree, 0);
+  //tree6 = balance_avl(tree6);
+
+  pretty_print_fe(maxi_tree, 0);
+  //pretty_print(tree6, 0);
+  tree_free(maxi_tree);
+
+
+  tree_t* maxi_tree2 = create(15);
+  insert(maxi_tree2, 39);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 28);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 40);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 10);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 78);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 75);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 21);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 73);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 9);
+   maxi_tree2 = balance_avl(maxi_tree2);
+
+  insert(maxi_tree2, 17);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 46);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 7);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 80);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 68);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 8);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 45);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 90);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 23);
+   maxi_tree2 = balance_avl(maxi_tree2);
+  insert(maxi_tree2, 56);
+   maxi_tree2 = balance_avl(maxi_tree2);
+
+  pretty_print(maxi_tree2, 0);
+  //tree6 = balance_avl(tree6);
+
+  pretty_print_fe(maxi_tree2, 0);
+  //pretty_print(tree6, 0);
+  tree_free(maxi_tree2);
+
   // Bug quand delete racine avec 1 enfant
   return EXIT_SUCCESS;
 }

@@ -1,3 +1,9 @@
+/**
+ * @file main.c
+ * @author Joey Martig
+ * @brief main du programme d'arbre binaires et avl
+ * @date 05.05.2022
+ */
 #include <stdio.h>
 
 #include "tree.h"
