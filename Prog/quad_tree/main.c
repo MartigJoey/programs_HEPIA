@@ -63,6 +63,8 @@ int main() {
 		printf("\n");
 	}
 	
+    lossless_compression(tree);
+	pretty_print(tree, 0);
   // quad_tree* symetrie(quad_tree* tree);
 	
   // quad_tree* compress(quad_tree* tree);

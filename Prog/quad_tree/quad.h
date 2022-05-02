@@ -13,7 +13,9 @@ void tree_free(quad_tree* tree);
 void to_matrix(quad_tree* qt, int row, int col, int** matrix);
 quad_tree* to_quad_tree(int size, int** array);
 void symetrie(quad_tree* tree);
-quad_tree* compress(quad_tree* tree);
+void lossless_compression(quad_tree* qt);
+//bool last_value(quad_tree* qt, int* val);
+//bool is_last_branch(quad_tree* qt);
 
 int tree_size(quad_tree* t);
 void pretty_print(quad_tree* tree, int depth);

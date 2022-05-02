@@ -1,9 +1,9 @@
 #include "quad.h"
 
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 quad_tree* create_node(int value) {
     quad_tree* node = calloc(1, sizeof(quad_tree));
@@ -41,7 +41,7 @@ void to_matrix(quad_tree* tree, int size, int index, int** matrix) {
             int new_index = index;
             //if(tree->children[i]->children[0] != NULL)
             new_index = index/4*i-1;
-                
+
             to_matrix(tree->children[i], size, new_index, matrix);
         }
         else{
@@ -53,7 +53,7 @@ void to_matrix(quad_tree* tree, int size, int index, int** matrix) {
 
             if((index+1) % 8 != 0 && index != 0)
                 x += 3;
-                
+
             int y = (int)floor((index+1) / size);
 
 
@@ -119,7 +119,6 @@ void to_matrix(quad_tree* qt, int row, int col, int** matrix) {
     }
 }
 
-
 int** alloc_array(int size) {
     int** array = malloc(sizeof(int*) * size);
     for (int i = 0; i < size; i++) {
@@ -176,19 +175,32 @@ quad_tree* to_quad_tree(int size, int** mat) {
     return tree;
 }
 
+/*
+AU PIRE
+node * matrix_to_qt(int nb_li , int nb_co , int matrix [nb_li ][nb_co ], int depth)
+    node *qt = qt_create(depth );
+    for (int li = 0 ; li < nd_li ; ++ li ) {
+        for (int co = 0 ; co < nd_co; ++ co ) {
+            node *current = position (li , co , qt );
+            current ->info = matrix [li ][ co ];
+        }
+    }
+    return qt ;
+}
+*/
+
 void symetrie(quad_tree* tree) {
     for (size_t i = 0; i < 4; i++) {
         if (tree->children[i] != NULL)
             symetrie(tree->children[i]);
     }
 
-        quad_tree* tmp = tree->children[0];
-        tree->children[0] = tree->children[1];
-        tree->children[1] = tmp;
-        tmp = tree->children[2];
-        tree->children[2] = tree->children[3];
-        tree->children[3] = tmp;
-    
+    quad_tree* tmp = tree->children[0];
+    tree->children[0] = tree->children[1];
+    tree->children[1] = tmp;
+    tmp = tree->children[2];
+    tree->children[2] = tree->children[3];
+    tree->children[3] = tmp;
 }
 
 quad_tree* compress(quad_tree* tree) {
@@ -215,10 +227,67 @@ void pretty_print(quad_tree* tree, int depth) {
         if (tree->children[i] != NULL)
             pretty_print(tree->children[i], depth + 1);
 
-        if(i == 3 && tree->children[0] != NULL && tree->children[0]->children[0] == NULL)
+        if (i == 3 && tree->children[0] != NULL && tree->children[0]->children[0] == NULL)
             printf("\n");
     }
 }
+
+void lossless_compression(quad_tree* qt) {
+    if (!is_leaf(qt)) {
+        for (int i = 0; i < 4; i++) {
+            lossless_compression(qt->children[i]);
+        }
+
+        if (qt->children[0]->children[0] == NULL) {
+            int val = qt->children[0]->val;
+            bool compress = true;
+
+            for (size_t i = 1; i < 3; i++){
+                printf("va %d   ch %d\n", val, qt->children[i]->val);
+                if(val != qt->children[i]->val){
+                    compress = false;
+                    break;
+                }
+            }
+
+            if(compress){
+                qt->val = val;
+                free(qt->children[0]);
+                qt->children[0] = NULL;
+
+                free(qt->children[1]);
+                qt->children[1] = NULL;
+
+                free(qt->children[2]);
+                qt->children[2] = NULL;
+
+                free(qt->children[3]);
+                qt->children[3] = NULL;
+            }
+        }
+    }
+}
+
+/*
+A FAIRE ++
+rien moyenne (arbre) {
+si !est_feuille (arbre)
+pour enfant dans arbre. enfants
+moyenne( enfant)
+pour enfant dans arbre. enfants
+arbre.moyenne += enfant .moyenne
+arbre.moyenne_carre += enfant.moyenne_carre
+arbre. moyenne /= 4
+arbre. moyenne_carre /= 4
+
+rien compression_avec_pertes( arbre, theta)
+si !est_feuille (arbre)
+pour i de 0 à 3
+compression_avec_pertes( arbre. enfant[i ])
+si derniere_branche(arbre)
+si racine (arbre. moyenne_carre - arbre. moyenne^ 2) < thet
+detruire_enfants(arbre)
+*/
 
 /*
 quad_tree* remove_node(quad_tree* tree) {
