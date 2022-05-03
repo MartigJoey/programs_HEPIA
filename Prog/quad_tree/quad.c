@@ -232,6 +232,29 @@ void pretty_print(quad_tree* tree, int depth) {
     }
 }
 
+void pretty_print_avg(quad_tree* tree, int depth) {
+    if (!depth)
+        printf("_____________________\n");
+
+    for (int i = 0; i < 2; i++) {
+        if (tree->children[i] != NULL)
+            pretty_print_avg(tree->children[i], depth + 1);
+    }
+
+    for (int i = 0; i < depth * 7; i++)
+        printf(" ");
+
+    printf("%f\n", tree->avg);
+
+    for (int i = 2; i < 4; i++) {
+        if (tree->children[i] != NULL)
+            pretty_print_avg(tree->children[i], depth + 1);
+
+        if (i == 3 && tree->children[0] != NULL && tree->children[0]->children[0] == NULL)
+            printf("\n");
+    }
+}
+
 void lossless_compression(quad_tree* qt) {
     if (!is_leaf(qt)) {
         for (int i = 0; i < 4; i++) {
@@ -291,14 +314,12 @@ void loss_compression(quad_tree* tree, float theta){
         }
 
         if(tree->children[0]->children[0] == NULL){
-            printf("cal %f   avg %f     pow %f\n",sqrt(tree->avg_pow - pow(tree->avg, 2)), tree->avg_pow, pow(tree->avg, 2));
-            printf("%f   ", sqrt(tree->avg_pow - pow(tree->avg, 2)));
-            printf("%d   %f\n", sqrt(tree->avg_pow - pow(tree->avg, 2)) < theta, theta);
+            //printf("cal %f   avg %f     pow %f\n",sqrt(tree->avg_pow - pow(tree->avg, 2)), tree->avg_pow, pow(tree->avg, 2));
+            //printf("%f   ", sqrt(tree->avg_pow - pow(tree->avg, 2)));
+            //printf("%d   %f\n", sqrt(tree->avg_pow - pow(tree->avg, 2)) < theta, theta);
 
             if(sqrt(tree->avg_pow - pow(tree->avg, 2)) < theta){
                 tree->val = sqrt(tree->avg_pow - pow(tree->avg, 2));
-                
-                printf("VAL %f\n\n", tree->val);
                 
                 free(tree->children[0]);
                 tree->children[0] = NULL;

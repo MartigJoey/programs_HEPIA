@@ -65,7 +65,8 @@ int main() {
 	
     //lossless_compression(tree);
     average(tree);
-    loss_compression(tree, 0.5f);
+    pretty_print_avg(tree, 0);
+    loss_compression(tree, 0.3f);
 	pretty_print(tree, 0);
   // quad_tree* symetrie(quad_tree* tree);
 	

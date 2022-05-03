@@ -23,6 +23,7 @@ void loss_compression(quad_tree* tree, float theta);
 
 int tree_size(quad_tree* t);
 void pretty_print(quad_tree* tree, int depth);
+void pretty_print_avg(quad_tree* tree, int depth);
 int tree_depth(quad_tree* tree);
 quad_tree* insert(quad_tree* t, int value);
 quad_tree* find(quad_tree* t, int value);
