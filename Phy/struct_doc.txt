@@ -1,0 +1,50 @@
+Focus:
+- Bonne intro
+- Puis conclusion
+- Puis le reste
+
+# Intro
+- Contexte (Pas cours de physique mais expérience -> simuler système solaire)
+- Prendre le lecteur pour un con mais pas que ça se voit
+- vérification fonctionnement
+- Liste chapitres avec résumé en 2-3 mots
+
+Ex:
+Mise en contexte
+- Pas dir que c'est un TP
+- Simuler le système solaire:
+ - Dans quel but ? Quel serait une application possible
+- Quelle approche globale utilisée
+- Liste des chapitres et un bref résumé de leur contenu
+ - Chapitre 1: rappel théorique sur les lois de newton
+ - Chapitre 2: blabal
+ - ...
+
+# Méthodologie
+Description de la méthodologie pour arriver au but décrit dans l'intro
+ - Introduction des notations (Définir les symboles)
+ - Algo, struct de données
+ - Rappel des noptions physiques / math
+
+A éviter:
+ - Liste des technologies
+
+# Résultats
+- Quels sont les résultats obtenus?
+- Comment avez vous validé votre approche? (Comment on sait que ça marche)
+- Figures et tableaux
+ - Légende, discussion
+
+
+# Conclusion
+- Parler des résultats (Les plus importants)
+- Faire le lien entre les différents chapitres
+
+Ex:
+- Rappel des résultats principaux
+- Ouverture sur la suite
+ - Qu'est-ce qu'on peuit améliorer 
+ - Comment continuer ?
+ - Quel est le but à très long terme ?
+
+
