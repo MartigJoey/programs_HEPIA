@@ -1,10 +1,17 @@
-from cmath import sqrt
+from cmath import sqrt, exp
+from operator import truediv
+from stat import SF_APPEND
+import sunau
 from unicodedata import name
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import subplots, show
 import numpy as np
 import csv
 from colorama import Fore, Back
+from scipy.stats import norm
+import statistics
+
+DICE_TYPE = 6
 
 def import_csv(file):
     data = []
@@ -30,14 +37,33 @@ def display_cumulative(values, ax, average, title):
         sum += yf[i] 
         yf[i] = sum / average
 
+    ax.set_xlabel("valeur dé(s)")
+    ax.set_ylabel("probabilité")
     ax.grid(True)
     ax.set_title(title)
     ax.plot(xf, yf, 'ro')
+
+def display_gauss(values, ax, average): 
+    yf = values.copy()
+    
+    min_val = max(yf)
+    mid = len(yf) / 2
+
+    for i in range(len(yf)):
+        if min_val > yf[i] and yf[i] != 0:
+            min_val = yf[i]
+
+    # Plot between -10 and 10 with .001 steps.
+    x_axis = np.arange(min_val, len(yf), 1)
+    
+    ax.plot(x_axis, norm.pdf(x_axis, mid, average), 'r-')
 
 def display_distributive(values, ax, title): 
     yf = values.copy()
     xf = np.linspace(0, len(values), len(yf))
 
+    ax.set_xlabel("valeur dé(s)")
+    ax.set_ylabel("probabilité")
     ax.grid(True)
     ax.set_ylim([0, max(yf)+max(yf)/100*10])
     ax.set_title(title)
@@ -48,6 +74,8 @@ def display_distributive_hist(values, ax, title):
     yf = yf[yf != 0]
     xf = np.linspace(0, len(values), len(yf))
     
+    ax.set_xlabel("valeur dé(s)")
+    ax.set_ylabel("probabilité")
     ax.grid(True)
     ax.set_ylim([0, max(yf)+max(yf)/100*10])
     ax.set_title(title)
@@ -87,7 +115,7 @@ def histogramme(values, nb_die, ax, title):
         if bins_val_y[i] != 0:
             limit_x_min = bins_interval_x[i] - bar_width
             break
-
+    
     ax.grid(True)
     ax.set_xlim([limit_x_min, limit_x_max])
     ax.set_title(title)
@@ -115,10 +143,10 @@ def display(name, stats, average, variance, mediane, ecart_type):
     print(f"variance: {variance}\n")
     print(f"écart-type: {ecart_type}\n")
 
-def throw_proba(nb_die, values, name, ax_dis, ax_cum, ax_hist):
+def throw_proba(nb_die, values, name, ax_dis, ax_cum, ax_hist, ax_dis_hist):
     # INIT
     # REGULAR
-    stats = np.zeros((nb_die, 6))
+    stats = np.zeros((nb_die, DICE_TYPE))
     average = np.zeros((nb_die))
     variance = np.zeros((nb_die))
     yf = np.array([[values[i][0] for i in range(len(values))]])
@@ -128,7 +156,7 @@ def throw_proba(nb_die, values, name, ax_dis, ax_cum, ax_hist):
 
     # SUM
     yf_sum = np.zeros((yf_size))
-    stats_sum = np.zeros((nb_die*6))
+    stats_sum = np.zeros((nb_die*DICE_TYPE))
     average_sum = 0
     variance_sum = 0
     mediane_sum = 0
@@ -139,14 +167,14 @@ def throw_proba(nb_die, values, name, ax_dis, ax_cum, ax_hist):
         yf_tmp = [values[i][j] for i in range(len(values))]
         yf = np.vstack([yf, yf_tmp])
 
-    # Calcul les sttatistiques pour chaque valeur du dé et la moyenne
+    # Calcul les statistiques pour chaque valeur du dé et la moyenne
     
     for i in range(1, nb_die + 1):
         for j in range(0, yf_size):
             stats[i-1][yf[i][j]-1] += yf[i][j]
             yf_sum[j] += yf[i][j]
         yf[i-1].sort()
-        stats[i-1] = [(stats[i-1][k] / yf_size) / (k + 1) for k in range(6)]
+        stats[i-1] = [(stats[i-1][k] / yf_size) / (k + 1) for k in range(DICE_TYPE)]
         average[i-1] = np.sum(yf, 1)[i] / yf_size
 
     stats = np.sum(stats, 0) / nb_die
@@ -189,20 +217,84 @@ def throw_proba(nb_die, values, name, ax_dis, ax_cum, ax_hist):
     display(name, stats, average, variance, mediane, ecart_type)
     display(name + " somme", stats_sum, average_sum, variance_sum, mediane_sum, ecart_type_sum)
 
+    display_distributive_hist(stats, ax_dis_hist, name + " distributive")
     display_distributive(stats_sum, ax_dis, name + " distributive")
+    display_gauss(stats_sum, ax_dis, average)
     display_cumulative(stats_sum, ax_cum, average, name + " cumulative")
     histogramme(yf_sum, nb_die, ax_hist, name + " histogramme")
+
+def get_nb_occurences(die_value, res_value, nb_die, sum_for, has_value):
+    sum_has_both = 0
+    sum_has_value = 0
+    sum = 0
+    for i in range(1, DICE_TYPE + 1):
+        if nb_die > 1:
+            res_shv, res_shb, res_s = get_nb_occurences(die_value, res_value, nb_die - 1, sum_for + i, i == die_value or has_value)
+            sum_has_value = sum_has_value + res_shv
+            sum_has_both = sum_has_both + res_shb
+            sum = sum + res_s
+        else:
+            if (has_value or i == die_value):
+                if (sum_for + i) == res_value:
+                    sum_has_both = sum_has_both + 1
+                sum_has_value = sum_has_value + 1
+            sum = sum + 1
+
+    return sum_has_value, sum_has_both, sum
+
+def proba_to_get_if_one_die(die_value, res_value):
+    sum_has_value, sum_has_both, sum = get_nb_occurences(die_value, res_value, 4, 0, False)
+    print(f"{sum_has_both}/{sum} / {sum_has_value}/{sum}")
+    return (sum_has_both / sum) / (sum_has_value / sum) * 100
+
+def stats_to_get_if_one_die(values, res_value, die_value):
+    nb_die = np.size(values, 1)
+    sum_has_res_and_value = 0
+    sum_has_res = 0
+    sum_has_value = 0
+    for j in range(0, np.size(values, 0)):
+        sum = 0
+        has_die_value = False
+        for i in range(1, nb_die):
+            if values[j][i] == die_value:
+                has_die_value = True
+            sum = sum + values[j][i]
+        if sum == res_value and has_die_value:
+            sum_has_res_and_value = sum_has_res_and_value + 1
+        
+        if sum == res_value and not has_die_value:
+            sum_has_res = sum_has_res + 1
+        
+        if has_die_value:
+            sum_has_value = sum_has_value + 1
+    
+    if sum_has_res == 0:
+        return sum_has_res_and_value
+
+    return sum_has_res_and_value / sum_has_value * 100
+
+            
 
 values1 = import_csv('lance1.csv')
 values2 = import_csv('lance2.csv')
 values3 = import_csv('lance3.csv')
 values4 = import_csv('lance4.csv')
 
-fig, (ax1, ax2, ax3) = subplots(3, 4)
+fig1, (ax1, ax2) = subplots(2, 2)
+throw_proba(1, values1, "lancé 1", ax1[0], ax2[0], ax1[1], ax2[1])
 
-throw_proba(1, values1, "lancé 1", ax1[0], ax2[0], ax3[0])
-throw_proba(2, values2, "lancé 2", ax1[1], ax2[1], ax3[1])
-throw_proba(3, values3, "lancé 3", ax1[2], ax2[2], ax3[2])
-throw_proba(4, values4, "lancé 4", ax1[3], ax2[3], ax3[3])
+fig2, (ax1, ax2) = subplots(2, 2)
+throw_proba(2, values2, "lancé 2", ax1[0], ax2[0], ax1[1], ax2[1])
+
+fig3, (ax1, ax2) = subplots(2, 2)
+throw_proba(3, values3, "lancé 3", ax1[0], ax2[0], ax1[1], ax2[1])
+
+fig4, (ax1, ax2) = subplots(2, 2)
+throw_proba(4, values4, "lancé 4", ax1[0], ax2[0], ax1[1], ax2[1])
+
+die_value = 5
+sum = 17
+print(f"Statistics to get {sum} if one die equals {die_value} {stats_to_get_if_one_die(values4, sum, die_value)} %")
+print(f"Probability to get {sum} if one die equals {die_value} {proba_to_get_if_one_die(die_value, sum)} %")
 
 show()
